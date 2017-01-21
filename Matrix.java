@@ -37,10 +37,57 @@ public class Matrix {
     //blockSolve();
   }
 
-  public void rowSolve () {
-    
+  public void rowSolve (Cell myCell) {
+    Cell x;
+    for (int i = 0; i < 9; i++) {
+      x = this.cellMatrix[myCell.row()][i];
+      if (i != myCell.col()) {
+        x.remove(myCell.solution());
+        if (x.solved()) { // if the Cell is solved, add it to the queue
+          this.queue.add(x);
+        }
+      }
+    }
   }
 
+  public void colSolve (Cell myCell) {
+    Cell y;
+    for (int i = 0; i < 9; i++) {
+      y = this.cellMatrix[i][myCell.row()];
+      if (i != myCell.row()) {
+        y.remove(myCell.solution());
+        if (y.solved()) {
+          this.queue.add(y);
+        }
+      }
+    }
+  }
+
+  public void blockSolve (Cell myCell) {
+    Cell z;
+    // figure out starting point
+    int[] start_point = new int[2];
+    start_point[0] = myCell.row();
+    start_point[1] = myCell.col();
+    while (start_point[0] != 0 && start_point[0] != 3 && start_point[0] != 6) {
+      start_point[0]--;
+    }
+    while (start_point[1] != 0 && start_point[1] != 3 && start_point[1] != 6) {
+      start_point[1]--;
+    }
+
+    for (int i = start_point[0]; i < start_point[0] + 3; i++) {
+      for (int j = start_point[1]; i < start_point[1] + 3; i++) {
+        z = this.cellMatrix[i][j];
+        if (!(i == myCell.row() && j == myCell)) {
+          z.remove(myCell.solution());
+          if (z.solved()) {
+            this.queue.add(z);
+          }
+        }
+      }
+    }
+  }
 }
 
 
