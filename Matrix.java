@@ -19,7 +19,7 @@ public class Matrix {
       }
     }
 
-    this.queue = new Queue<Cell>;
+    this.queue = new LinkedList<Cell>();
 
     for (int i = 0; i < givenCells.length; i++) {
       replaceCell(givenCells[i]);
@@ -32,9 +32,15 @@ public class Matrix {
   }
 
   public void simpleSolve () {
-    rowSolve();
-    //colSolve();
-    //blockSolve();
+    while (this.queue.size() < 81) {
+      Cell currentCell = this.queue.remove();
+      rowSolve(currentCell);
+      colSolve(currentCell);
+      blockSolve(currentCell);
+      this.queue.add(currentCell);
+
+    }
+
   }
 
   public void rowSolve (Cell myCell) {
@@ -79,7 +85,7 @@ public class Matrix {
     for (int i = start_point[0]; i < start_point[0] + 3; i++) {
       for (int j = start_point[1]; i < start_point[1] + 3; i++) {
         z = this.cellMatrix[i][j];
-        if (!(i == myCell.row() && j == myCell)) {
+        if (!(i == myCell.row() && j == myCell.col())) {
           z.remove(myCell.solution());
           if (z.solved()) {
             this.queue.add(z);
