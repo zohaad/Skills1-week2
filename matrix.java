@@ -40,8 +40,6 @@ public class matrix {
       rowSolve(x);
       colSolve(x);
       blockSolve(x);
-      // print();
-      System.out.println(this.queue.size());
     }
   }
 
