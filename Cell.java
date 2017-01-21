@@ -1,3 +1,4 @@
+import java.util.*;
 public class Cell {
   private ArrayList<Integer> hints;
   private int[] position;
@@ -39,7 +40,7 @@ public class Cell {
     }
   }
 
-  public void contains (int i) {
+  public boolean contains (int i) {
     if (this.hints.contains(i)) {
       return true;
     }
@@ -54,7 +55,7 @@ public class Cell {
 
   public void remove (int i) {
     if (contains(i)) {
-      this.hints.remove(indexOf(i));
+      this.hints.remove(this.hints.indexOf(i));
     }
   }
 
