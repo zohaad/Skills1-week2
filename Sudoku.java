@@ -1,10 +1,10 @@
 import java.util.*;
 import java.io.*;
 
-public class sudoku {
-  public static void main (String args[]) {
-    String filename = "Sudoku1.txt";
-    matrix A = null;
+public class Sudoku {
+  public static void main (String[] args) {
+    String filename = args[0];
+    Matrix A = null;
 
     try {
       A = matrixMaker(filename);
@@ -17,27 +17,26 @@ public class sudoku {
     A.simpleSolve();
     System.out.println();
     A.print();
-
   }
 
-  public static matrix matrixMaker (String filename)
+  public static Matrix matrixMaker (String filename)
     throws java.io.FileNotFoundException {
-      File file = new File(filename);
-      Scanner scan = new Scanner(file);
+    File file = new File(filename);
+    Scanner scan = new Scanner(file);
 
-      int n = scan.nextInt();
+    int n = scan.nextInt();
 
-      int[] pos = new int[2];
-      cell[] givenHintsArray = new cell[n];
+    int[] pos = new int[2];
+    Cell[] givenHintArray = new Cell[n];
 
-      for (int i = 0; i < n; i++) {
-        pos[0] = scan.nextInt();
-        pos[1] = scan.nextInt();
-        ArrayList<Integer> givenHint = new ArrayList<Integer>();
-        givenHint.add(scan.nextInt());
-        givenHintsArray[i] = new cell(givenHint, pos);
-      }
-      matrix myMatrix = new matrix(givenHintsArray);
-      return myMatrix;
+    for (int i = 0; i < n; i++) {
+      pos[0] = scan.nextInt();
+      pos[1] = scan.nextInt();
+      ArrayList<Integer> givenHint = new ArrayList<Integer>();
+      givenHint.add(scan.nextInt());
+      givenHintArray[i] = new Cell(givenHint, pos);
+    }
+    Matrix myMatrix = new Matrix(givenHintArray);
+    return myMatrix;
   }
 }

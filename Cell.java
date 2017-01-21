@@ -2,8 +2,6 @@ import java.util.*;
 public class Cell {
   private ArrayList<Integer> hints;
   private int[] position;
-  private boolean solved;
-  private boolean empty;
 
   public Cell (ArrayList<Integer> hintsGiven, int[] positionGiven) {
     this.position = new int[2];
@@ -16,14 +14,12 @@ public class Cell {
       this.hints.add(hintsGiven.get(i));
     }
 
-    this.empty = empty();
 
-    this.solved = solved();
 
   }
 
   public boolean empty() {
-    if (this.hints.size() == 0) {
+    if (this.hints.isEmpty()) {
       return true;
     }
     else {

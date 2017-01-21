@@ -32,13 +32,11 @@ public class Matrix {
   }
 
   public void simpleSolve () {
-    while (this.queue.size() < 81) {
+    while (!Qempty()) {
       Cell currentCell = this.queue.remove();
       rowSolve(currentCell);
       colSolve(currentCell);
-      blockSolve(currentCell);
-      this.queue.add(currentCell);
-
+      blockSolve(currentCell); 
     }
 
   }
@@ -92,6 +90,24 @@ public class Matrix {
           }
         }
       }
+    }
+  }
+
+  public void print () {
+    for (int i = 0; i < 9; i++) {
+      for (int j = 0; j < 9; j++) {
+        System.out.print(this.cellMatrix[i][j].solution() + " | ");
+      }
+      System.out.println();
+    }
+  }
+
+  public boolean Qempty () {
+    if (this.queue.size() == 0) {
+      return true;
+    }
+    else {
+      return false;
     }
   }
 }
