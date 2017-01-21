@@ -36,20 +36,22 @@ public class matrix {
 
   public void simpleSolve () {
     while (!this.queue.isEmpty()) {
-      cell x = this.queue.poll(); // remove and retrieve head of queue
+      cell x = this.queue.remove(); // remove and retrieve head of queue
       rowSolve(x);
       colSolve(x);
       blockSolve(x);
+      // print();
+      System.out.println(this.queue.size());
     }
   }
 
   public void rowSolve (cell myCell) {
-    cell x;
     for (int i = 0; i < 9; i++) { // fix row, go through columns
-      x = this.cellMatrix[myCell.row()][i];
+      cell x = this.cellMatrix[myCell.row()][i];
       if (i != myCell.col()) {
+        int p = x.size();
         x.remove(myCell.solution());
-        if (x.solved()) {
+        if (x.solved() && p == 2 ) { // only add to queue if it has recently been solved
           this.queue.add(x);
         }
       }
@@ -57,12 +59,12 @@ public class matrix {
   }
 
   public void colSolve (cell myCell) {
-    cell x;
     for (int i = 0; i < 9; i++) { // fix column, go through rows
-      x = this.cellMatrix[i][myCell.col()];
+      cell x = this.cellMatrix[i][myCell.col()];
       if (i != myCell.row()) {
+        int p = x.size();
         x.remove(myCell.solution());
-        if (x.solved()) {
+        if (x.solved() && p == 2) {
           this.queue.add(x);
         }
       }
@@ -70,7 +72,6 @@ public class matrix {
   }
 
   public void blockSolve (cell myCell) {
-    cell x;
     // first figure out a starting point for the block
     int[] start_point = new int[2];
     start_point[0] = myCell.row();
@@ -83,11 +84,12 @@ public class matrix {
     }
 
     for (int i = start_point[0]; i < start_point[0] + 3; i++) {
-      for (int j = start_point[1]; i < start_point[1] + 3; j++) {
-        x = this.cellMatrix[i][j];
+      for (int j = start_point[1]; j < start_point[1] + 3; j++) {
+        cell x = this.cellMatrix[i][j];
         if (!(i == myCell.row() && j == myCell.col())) {
+          int p = x.size();
           x.remove(myCell.solution());
-          if (x.solved()) {
+          if (x.solved() && p == 2) {
             this.queue.add(x);
           }
         }
@@ -98,9 +100,15 @@ public class matrix {
   public void print () {
     for (int i = 0; i < 9; i++) {
       for (int j = 0; j < 9; j++) {
-        System.out.print(this.cellMatrix[i][j].solution() + " ");
+        if (this.cellMatrix[i][j].solved()) {
+          System.out.print(this.cellMatrix[i][j].solution() + " ");
+        }
+        else {
+          System.out.print("X ");
+        }
       }
       System.out.println();
     }
+    System.out.println();
   }
 }

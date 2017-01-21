@@ -20,6 +20,10 @@ public class cell {
   public boolean isEmpty () {
     return this.candidates.isEmpty();
   }
+  
+  public int size () {
+    return this.candidates.size();
+  }
 
   public boolean solved () {
     return this.candidates.size() == 1;
