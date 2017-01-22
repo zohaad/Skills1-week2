@@ -21,12 +21,12 @@ public class cell {
     return this.candidates.isEmpty();
   }
 
-  public boolean isNull () {
-    return size() == 0;
-  }
-  
   public int size () {
     return this.candidates.size();
+  }
+
+  public boolean isNull () {
+    return size() == 0;
   }
 
   public boolean solved () {
