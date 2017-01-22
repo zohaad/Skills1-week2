@@ -49,9 +49,9 @@ public class matrix {
     for (int i = 0; i < 9; i++) { // fix row, go through columns
       cell x = this.cellMatrix[myCell.row()][i];
       if (i != myCell.col()) {
-        int p = x.size();
+        int oldSize = x.size();
         x.remove(myCell.solution());
-        if (x.solved() && p == 2 ) { // only add to queue if it has recently been solved
+        if (x.solved() && oldSize == 2 ) { // only add to queue if it has recently been solved
           this.queue.add(x);
         }
       }
@@ -62,9 +62,9 @@ public class matrix {
     for (int i = 0; i < 9; i++) { // fix column, go through rows
       cell x = this.cellMatrix[i][myCell.col()];
       if (i != myCell.row()) {
-        int p = x.size();
+        int oldSize = x.size();
         x.remove(myCell.solution());
-        if (x.solved() && p == 2) {
+        if (x.solved() && oldSize == 2) {
           this.queue.add(x);
         }
       }
@@ -87,13 +87,34 @@ public class matrix {
       for (int j = start_point[1]; j < start_point[1] + 3; j++) {
         cell x = this.cellMatrix[i][j];
         if (!(i == myCell.row() && j == myCell.col())) {
-          int p = x.size();
+          int oldSize = x.size();
           x.remove(myCell.solution());
-          if (x.solved() && p == 2) {
+          if (x.solved() && oldSize == 2) {
             this.queue.add(x);
           }
         }
       }
+    }
+  }
+
+  public void genSolve () {
+    // while Q is not empty do simpleSolve and genSolve
+  }
+
+  public void genRowSolve () {
+    for (int i = 0; i < 9; i++) { // for every row
+      // List<List<Integer>> myNums = new ArrayList<ArrayList<Integer>>(9);
+      // List<List<Integer>> genRow = new ArrayList<>();
+      List<List<cell>> genRow = new ArrayList<>();
+      for (int j = 1; j < 10; j++) { // for every number
+        genRow.add(new ArrayList<cell>());
+        for (int k = 0; k < 9; k++) { // for every cell (column) in the row
+          if (this.cellMatrix[i][k].contains(j)) {
+            genRow.get(j - 1).add(this.cellMatrix[i][k]);
+          }
+        }
+      }
+      // now we have an arraylist representing {1 ... 9}, containing the cells in an arraylist. Now we need to pluck out the singleton sets:
     }
   }
 
