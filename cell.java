@@ -20,13 +20,17 @@ public class cell {
   public boolean isEmpty () {
     return this.candidates.isEmpty();
   }
+
+  public boolean isNull () {
+    return size() == 0;
+  }
   
   public int size () {
     return this.candidates.size();
   }
 
   public boolean solved () {
-    return this.candidates.size() == 1;
+    return size() == 1;
   }
 
   public boolean contains (int i) {
@@ -41,6 +45,14 @@ public class cell {
   public void remove (int i) {
     if (contains(i)) {
       this.candidates.remove(this.candidates.indexOf(i));
+    }
+  }
+
+  public void removeExcept (int i) {
+    for (int j = 1; j < 10; j++) {
+      if (j != i) {
+        remove(j);
+      }
     }
   }
 

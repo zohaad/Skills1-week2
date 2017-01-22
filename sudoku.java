@@ -14,7 +14,8 @@ public class sudoku {
     }
 
     A.print();
-    A.simpleSolve();
+    // A.simpleSolve();
+    A.genSolve();
     System.out.println();
     A.print();
   }

@@ -41,7 +41,7 @@ public class matrix {
       colSolve(x);
       blockSolve(x);
       // print();
-      System.out.println(this.queue.size());
+      // System.out.println(this.queue.size());
     }
   }
 
@@ -51,7 +51,7 @@ public class matrix {
       if (i != myCell.col()) {
         int oldSize = x.size();
         x.remove(myCell.solution());
-        if (x.solved() && oldSize == 2 ) { // only add to queue if it has recently been solved
+        if (x.solved() && oldSize == 2) { // only add to queue if it has recently been solved
           this.queue.add(x);
         }
       }
@@ -99,12 +99,20 @@ public class matrix {
 
   public void genSolve () {
     // while Q is not empty do simpleSolve and genSolve
+    while (!this.queue.isEmpty()) {
+      cell x = this.queue.remove();
+      rowSolve(x);
+      colSolve(x);
+      blockSolve(x);
+      genRowSolve();
+      genColSolve();
+      genBlockSolve();
+      System.out.println(this.queue.size());
+    }
   }
 
   public void genRowSolve () {
     for (int i = 0; i < 9; i++) { // for every row
-      // List<List<Integer>> myNums = new ArrayList<ArrayList<Integer>>(9);
-      // List<List<Integer>> genRow = new ArrayList<>();
       List<List<cell>> genRow = new ArrayList<>();
       for (int j = 1; j < 10; j++) { // for every number
         genRow.add(new ArrayList<cell>());
@@ -114,10 +122,68 @@ public class matrix {
           }
         }
       }
-      // now we have an arraylist representing {1 ... 9}, containing the cells in an arraylist. Now we need to pluck out the singleton sets:
+      // now we have an ArrayList representing {1 ... 9}, containing the cells in an arraylist. Now we need to pluck out the singleton sets:
+      for (int j = 1; j < 10; j++) { // for every number ...
+        List<cell> x = genRow.get(j - 1);
+        if (x.size() == 1 && x.get(0).size() > 1) { // if only one candidate exists for the number ...
+          // clean the cell up:
+          x.get(0).removeExcept(j);
+          // and add it to the queue
+          this.queue.add(x.get(0));
+        }
+      }
+    }
+  }
+  // similarly:
+  
+  public void genColSolve () {
+    for (int i = 0; i < 9; i++) { // for every column
+      List<List<cell>> genCol = new ArrayList<>();
+      for (int j = 1; j < 10; j++) { // for every number
+        genCol.add(new ArrayList<cell>());
+        for (int k = 0; k < 9; k++) { // for every row
+          if (this.cellMatrix[k][i].contains(j)) {
+            genCol.get(j - 1).add(this.cellMatrix[k][i]);
+          }
+        }
+      }
+      for (int j = 1; j < 10; j++) {
+        List<cell> x = genCol.get(j - 1);
+        if (x.size() == 1 && x.get(0).size() > 1) {
+          x.get(0).removeExcept(j);
+          this.queue.add(x.get(0));
+        }
+      }
     }
   }
 
+  public void genBlockSolve () {
+    // setting block structure
+    for (int r = 0; r < 7; r += 3) { // block row
+      for (int c = 0; c < 7; c += 3) { // block col
+        List<List<cell>> genBlock = new ArrayList<>(); // for every block
+        for (int j = 1; j < 10; j++) { // for every number
+          genBlock.add(new ArrayList<cell>());
+          for (int i = r; i < r + 3; i++) { // for every row
+            for (int k = c; k < c + 3; k++) { // for every col
+              if (this.cellMatrix[i][k].contains(j)) { // if it contains the number ..
+                genBlock.get(j - 1).add(this.cellMatrix[i][k]); // add it to the corresponding ArrayList (type cell)
+              }
+            }
+          }
+        }
+        for (int j = 1; j < 10; j++) { // for every number
+          List<cell> x = genBlock.get(j - 1);
+          if (x.size() == 1 && x.get(0).size() > 1) {
+            x.get(0).removeExcept(j);
+            this.queue.add(x.get(0));
+          }
+        }
+      }
+    }
+  }
+
+  // a simple printing method for the sudoku
   public void print () {
     for (int i = 0; i < 9; i++) {
       for (int j = 0; j < 9; j++) {
