@@ -52,17 +52,30 @@ public class cell {
     }
   }
 
+  public void removeExceptIndex (int i, int size) {
+    int count = 0;
+    while (count < i) {
+      this.candidates.remove(count);
+      count++;
+    }
+    while (count + 1 < size) { 
+      this.candidates.remove(count + 1);
+      count++;
+    }
+
+  }
+
   public ArrayList<Integer> currentCandidates () {
     return this.candidates;
   }
 
   public int row () {
-    return position[0];
+    return position()[0];
   }
 
 
   public int col () {
-    return position[1];
+    return position()[1];
   }
 
   public int[] position () {

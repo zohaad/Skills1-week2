@@ -31,7 +31,7 @@ public class sudoku {
   }
 
   public void replace (cell myCell) {
-    this.cellMatrix[myCell.row()][myCell.col()] = new cell(myCell.currentCandidates(), myCell.position());
+    this.cellMatrix[myCell.row()][myCell.col()] = myCell;
   }
 
   public void simpleSolve () {
@@ -125,7 +125,7 @@ public class sudoku {
       // now we have an ArrayList representing {1 ... 9}, containing the cells in an arraylist. Now we need to pluck out the singleton sets:
       for (int j = 1; j < 10; j++) { // for every number ...
         List<cell> x = genRow.get(j - 1);
-        if (x.size() == 1 && x.get(0).size() > 1) { // if only one candidate exists for the number ...
+        if (x.size() == 1 && x.get(0).size() > 1) { // if only one candidate exists for the number and simpleSolve() couldn't find it...
           // clean the cell up:
           x.get(0).removeExcept(j);
           // and add it to the queue
@@ -187,7 +187,7 @@ public class sudoku {
   public void print () {
     for (int i = 0; i < 9; i++) {
       for (int j = 0; j < 9; j++) {
-        if (this.cellMatrix[i][j].isEmpty()) {
+        if (this.cellMatrix[i][j].isEmpty()) { // debug code
           System.out.print("+ ");
         }
         else if (this.cellMatrix[i][j].solved()) {
@@ -202,15 +202,74 @@ public class sudoku {
     System.out.println();
   }
 
+  public void bruteForce () { // this uses enumeration method
+    genSolve();
+    Stack missingCells = new Stack();
+
+    for (int i = 0; i < 9; i++) {
+      for (int j = 0; j < 9; j++) {
+        if (this.cellMatrix[i][j].size() > 1) {
+          Stack choices = new Stack();
+
+          for (int k = 0; k < this.cellMatrix[i][j].size(); k++) {
+            cell x = this.cellMatrix[i][j].copy();
+            x.removeExceptIndex(k, this.cellMatrix[i][j].size());
+            choices.push(x);
+          }
+          missingCells.push(choices);
+        }
+      }
+    }
+
+    sudoku A = copy();
+    while (!A.solved()) {
+      if ( (int) ((Stack)missingCells.peek()).size() > 1) {
+        Stack x = (Stack) missingCells.peek();
+        cell y = (cell) x.pop();
+        A.replace(y);
+      }
+      else {
+        A.replace((cell)((Stack)missingCells.pop()).pop());
+      }
+      if (A.contradiction()) {
+        break;
+      }
+      A.bruteForce();
+    }
+  }
+
   public sudoku copy () {
     ArrayList<cell> allHints = new ArrayList<cell>();
     for (int i = 0; i < 9; i++) { // row
       for (int j = 0; j < 9; j++) { // column
         if (this.cellMatrix[i][j].solved()) {
-          allHints.add(this.cellMatrix[i][j].copy()); // add a new copy of the cell
+          allHints.add(this.cellMatrix[i][j].copy());
         }
       }
     }
     return new sudoku(allHints);
   }
+
+  public boolean contradiction () {
+    for (int i = 0; i < 9; i++) {
+      for (int j = 0; j < 9; j++) {
+        if (this.cellMatrix[i][j].isEmpty()) {
+          return true;
+        }
+      }
+    }
+    return true;
+  }
+
+  public boolean solved () {
+    for (int i = 0; i < 9; i++) {
+      for (int j = 0; j < 9; j++) {
+        if (this.cellMatrix[i][j].size() != 1) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
 }
