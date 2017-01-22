@@ -25,10 +25,6 @@ public class cell {
     return this.candidates.size();
   }
 
-  public boolean isNull () {
-    return size() == 0;
-  }
-
   public boolean solved () {
     return size() == 1;
   }
@@ -72,4 +68,8 @@ public class cell {
   public int[] position () {
     return this.position;
   } 
+  
+  public cell copy () { // returns a "hard" copy Java doesn't have hard copies, but this is good enough
+    return new cell(currentCandidates(), position());
+  }
 }
