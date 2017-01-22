@@ -204,16 +204,16 @@ public class sudoku {
 
   public void bruteForce () { // this uses enumeration method
     genSolve();
-    Stack missingCells = new Stack();
+    Stack<Stack> missingCells = new Stack<>();
 
     for (int i = 0; i < 9; i++) {
       for (int j = 0; j < 9; j++) {
         if (this.cellMatrix[i][j].size() > 1) {
-          Stack choices = new Stack();
+          Stack<cell> choices = new Stack<>();
 
           for (int k = 0; k < this.cellMatrix[i][j].size(); k++) {
             cell x = this.cellMatrix[i][j].copy();
-            x.removeExceptIndex(k, this.cellMatrix[i][j].size());
+            x.removeExceptIndex(k);
             choices.push(x);
           }
           missingCells.push(choices);
@@ -223,18 +223,16 @@ public class sudoku {
 
     sudoku A = copy();
     while (!A.solved()) {
-      if ( (int) ((Stack)missingCells.peek()).size() > 1) {
-        Stack x = (Stack) missingCells.peek();
-        cell y = (cell) x.pop();
-        A.replace(y);
+      if (missingCells.peek().size() > 1) {
+        A.replace((cell)missingCells.peek().pop());
       }
       else {
-        A.replace((cell)((Stack)missingCells.pop()).pop());
+        A.replace((cell)missingCells.pop().pop());
       }
+      A.bruteForce();
       if (A.contradiction()) {
         break;
       }
-      A.bruteForce();
     }
   }
 
