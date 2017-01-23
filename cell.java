@@ -44,12 +44,15 @@ public class cell {
     }
   }
 
-  public void removeExcept (int i) {
-    for (int j = 1; j < 10; j++) {
-      if (j != i) {
-        remove(j);
-      }
+  public void removeIndex (int i) {
+    if (contains(this.candidates.get(i))) {
+      this.candidates.remove(i);
     }
+  }
+
+  public void removeExcept (int i) {
+    this.candidates.clear();
+    this.candidates.add(i);
   }
 
   public void removeExceptIndex (int i) {

@@ -45,6 +45,14 @@ public class sudoku {
     }
   }
 
+  public cell[][] returnCellMatrix () {
+    return this.cellMatrix;
+  }
+
+  public Queue<cell> returnQueue () {
+    return this.queue;
+  }
+
   public void rowSolve (cell myCell) {
     for (int i = 0; i < 9; i++) { // fix row, go through columns
       cell x = this.cellMatrix[myCell.row()][i];
@@ -202,38 +210,42 @@ public class sudoku {
     System.out.println();
   }
 
-  public void bruteForce () { // this uses enumeration method
-    genSolve();
-    Stack<Stack> missingCells = new Stack<>();
+  public boolean bruteForce () { // this uses enumeration method
+    // genSolve();
+    cell missingCell = this.cellMatrix[1][1];
 
+    int k = 0;
+    mainloop:
     for (int i = 0; i < 9; i++) {
       for (int j = 0; j < 9; j++) {
-        if (this.cellMatrix[i][j].size() > 1) {
-          Stack<cell> choices = new Stack<>();
-
-          for (int k = 0; k < this.cellMatrix[i][j].size(); k++) {
-            cell x = this.cellMatrix[i][j].copy();
-            x.removeExceptIndex(k);
-            choices.push(x);
-          }
-          missingCells.push(choices);
+        if (this.cellMatrix[i][j].size() > 1) { // if a cell has length larger than 1
+          missingCell = this.cellMatrix[i][j].copy(); // add it to the missingCell
+          k = missingCell.size();
+          break mainloop;
         }
       }
     }
 
-    sudoku A = copy();
-    while (!A.solved()) {
-      if (missingCells.peek().size() > 1) {
-        A.replace((cell)missingCells.peek().pop());
-      }
-      else {
-        A.replace((cell)missingCells.pop().pop());
-      }
-      A.bruteForce();
+    for (int i = 0; i < k; i++) {
+      cell testCell = missingCell.copy(); // copy it
+      testCell.removeExceptIndex(i); // remove
+      sudoku A = copy();
+      A.replace(testCell);
+      A.genSolve();
+
       if (A.contradiction()) {
-        break;
+        continue;
+      }
+      else if (A.solved()) {
+        //this.cellMatrix = A.returnCellMatrix();
+        //this.queue = A.returnQueue();
+        return true;
+      }
+      else { // run into another roadblock
+        return A.bruteForce();
       }
     }
+    return false; // shouldn't be ever reached
   }
 
   public sudoku copy () {
@@ -256,7 +268,7 @@ public class sudoku {
         }
       }
     }
-    return true;
+    return false;
   }
 
   public boolean solved () {
