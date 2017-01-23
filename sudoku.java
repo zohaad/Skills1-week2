@@ -202,37 +202,30 @@ public class sudoku {
     System.out.println();
   }
 
-  public void bruteForce () { // this uses enumeration method
-    genSolve();
-    Stack<Stack> missingCells = new Stack<>();
+  public sudoku bruteForce () { // this uses enumeration method
+    sudoku A = copy();
+    A.genSolve();
 
+    Stack<sudoku> myStack = new Stack<>();
     for (int i = 0; i < 9; i++) {
       for (int j = 0; j < 9; j++) {
-        if (this.cellMatrix[i][j].size() > 1) {
-          Stack<cell> choices = new Stack<>();
-
-          for (int k = 0; k < this.cellMatrix[i][j].size(); k++) {
-            cell x = this.cellMatrix[i][j].copy();
-            x.removeExceptIndex(k);
-            choices.push(x);
+        if (A.cellMatrix[i][j].size() > 1) {
+          for (int k = 0; k < A.cellMatrix[i][j].size(); k++) {
+            sudoku B = A.copy();
+            B.cellMatrix[i][j].removeExceptIndex(k);
+            myStack.add(B);
           }
-          missingCells.push(choices);
         }
       }
     }
+    sudoku C = myStack.pop();
+    C.genSolve();
 
-    sudoku A = copy();
-    while (!A.solved()) {
-      if (missingCells.peek().size() > 1) {
-        A.replace((cell)missingCells.peek().pop());
-      }
-      else {
-        A.replace((cell)missingCells.pop().pop());
-      }
-      A.bruteForce();
-      if (A.contradiction()) {
-        break;
-      }
+    if(!C.contradiction() && C.solved()) {
+      return C;
+    }
+    else {
+      return myStack.pop().bruteForce();
     }
   }
 
@@ -251,7 +244,7 @@ public class sudoku {
   public boolean contradiction () {
     for (int i = 0; i < 9; i++) {
       for (int j = 0; j < 9; j++) {
-        if (this.cellMatrix[i][j].isEmpty()) {
+        if (this.cellMatrix[i][j].isEmpty() || this.cellMatrix[i][j].solution() == -1) {
           return true;
         }
       }

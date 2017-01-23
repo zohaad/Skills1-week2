@@ -16,9 +16,8 @@ public class sudokuSolver {
     A.print();
     // A.simpleSolve();
     // A.genSolve();
-    A.bruteForce();
+    A.bruteForce().print();
     System.out.println();
-    A.print();
   }
 
   public static sudoku sudokuReader (String filename)
