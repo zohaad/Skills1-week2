@@ -210,11 +210,16 @@ public class sudoku {
     System.out.println();
   }
 
-  public boolean bruteForce () { // this uses enumeration method
+  public sudoku bruteForce () { // this uses enumeration method
     // genSolve();
+    if (solved()) {
+      return copy();
+    }
+
     cell missingCell = this.cellMatrix[1][1];
 
-    int k = 0;
+
+    int k = missingCell.size();
     mainloop:
     for (int i = 0; i < 9; i++) {
       for (int j = 0; j < 9; j++) {
@@ -239,13 +244,14 @@ public class sudoku {
       else if (A.solved()) {
         //this.cellMatrix = A.returnCellMatrix();
         //this.queue = A.returnQueue();
-        return true;
+        return A;
       }
       else { // run into another roadblock
         return A.bruteForce();
       }
     }
-    return false; // shouldn't be ever reached
+    sudoku B = copy();
+    return B; // shouldn't be ever reached
   }
 
   public sudoku copy () {
@@ -263,7 +269,7 @@ public class sudoku {
   public boolean contradiction () {
     for (int i = 0; i < 9; i++) {
       for (int j = 0; j < 9; j++) {
-        if (this.cellMatrix[i][j].isEmpty()) {
+        if (this.cellMatrix[i][j].isEmpty() || this.cellMatrix[i][j].solution() == 0) {
           return true;
         }
       }
@@ -274,7 +280,7 @@ public class sudoku {
   public boolean solved () {
     for (int i = 0; i < 9; i++) {
       for (int j = 0; j < 9; j++) {
-        if (this.cellMatrix[i][j].size() != 1) {
+        if (this.cellMatrix[i][j].size() != 1 && this.cellMatrix[i][j].solution() != 0) {
           return false;
         }
       }

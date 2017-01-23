@@ -35,7 +35,12 @@ public class cell {
 
   // kind of dangerous
   public int solution () {
-    return this.candidates.get(0);
+    if (!isEmpty()) {
+      return this.candidates.get(0);
+    }
+    else {
+      return 0;
+    }
   }
 
   public void remove (int i) {
