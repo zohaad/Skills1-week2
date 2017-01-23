@@ -219,14 +219,23 @@ public class sudoku {
       }
     }
     sudoku C = myStack.pop();
-    C.genSolve();
-
-    if(!C.contradiction() && C.solved()) {
+    while (!C.solved()) {
+      C.genSolve();
+      if(!C.contradiction()) {
+        C.bruteForce();
+      }
+      else {
+        break;
+      }
+    }
+    if (C.solved() && !C.contradiction()) {
       return C;
     }
     else {
-      return myStack.pop().bruteForce();
+      C = myStack.pop();
+      C.bruteForce();
     }
+    return C;
   }
 
   public sudoku copy () {
