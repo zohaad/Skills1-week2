@@ -242,15 +242,20 @@ public class sudoku {
       }
     }
 
+    cell oldCell = null;
     cell x = null;
+    sudoku oldA = null;
     System.out.println("begin: " + myStack.size());
     while (!myStack.isEmpty()) {
       x = myStack.pop();
+      oldCell = A.cellMatrix[x.row()][x.col()];
+      oldA = A.copy(); // make a backup of head of current branch node
       A.replace(x);
       System.out.println(myStack.size());
       A.genSolve();
       if (A.contradiction()) {
-        A = copy();
+        A = oldA.copy();
+        A.cellMatrix[x.row()][x.col()].remove(x.solution());
         continue;
       }
       else if (A.solved()) {
@@ -271,7 +276,7 @@ public class sudoku {
             }
           }
         }
-        //A = copy();
+        // A = copy();
       }
       //x = myStack.pop();
       //A.replace(x);
