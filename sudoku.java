@@ -213,51 +213,34 @@ public class sudoku {
   }
 
   public sudoku bruteForce () { // this uses enumeration method
-    genSolve();
-    if (solved() && !contradiction()) {
-      return copy();
-    }
 
-    cell missingCell = this.cellMatrix[1][1];
-    int p = 0;
-    int q = 0;
-    int k = missingCell.size();
-    mainloop:
-    for (int i = 0; i < 9; i++) {
+    for (int i = 0; i < 9; i++) { // for every cell ..
       for (int j = 0; j < 9; j++) {
         if (this.cellMatrix[i][j].size() > 1) { // if a cell has length larger than 1
-          missingCell = this.cellMatrix[i][j]; // add it to the missingCell
-          k = missingCell.size();
-          p = i;
-          q = j;
-          break mainloop;
+          cell missingCell = this.cellMatrix[i][j]; // add it to the missingCell
+          // check every value for the cell
+          for (int p = 0; p < missingCell.size(); p++) {
+            cell testCell = missingCell.copy(); // copy it
+            testCell.removeExceptIndex(p); // remove except index p 
+            sudoku A = copy();
+            A.replace(testCell);
+            A.genSolve(); // solving algo using logic rules
+            System.out.println("branches");
+
+            if (A.contradiction()) {
+              continue;
+            }
+            else if (A.solved()) {
+              return A;
+            }
+            else { // run into another roadblock
+              return A.bruteForce();
+            }
+          }
         }
       }
     }
-
-    for (int i = 0; i < k; i++) {
-      cell testCell = missingCell.copy(); // copy it
-      testCell.removeExceptIndex(i); // remove
-      sudoku A = copy();
-      A.replace(testCell);
-      A.genSolve(); // solving algo using logic rules
-      System.out.println("branches");
-
-      if (A.contradiction()) {
-        continue;
-      }
-      else if (A.solved()) {
-        return A;
-      }
-      else { // run into another roadblock
-        return A.bruteForce();
-      }
-    }
-    // System.out.println("null!");
-    // sudoku B = copy();
-    // B.cellMatrix[p][q].reset();
-    // return B.bruteForce();
-    return null;
+    return copy(); // no solution
   }
 
   public sudoku copy () {
