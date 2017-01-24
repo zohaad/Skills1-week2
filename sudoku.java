@@ -214,33 +214,70 @@ public class sudoku {
 
   public sudoku bruteForce () { // this uses enumeration method
 
+    sudoku A = copy();
+    A.genSolve();
+    if (!A.contradiction() && A.solved()) {
+      return A;
+    }
+
+
+    int q = 0;
+    int w = 0;
+    Stack<cell> myStack = new Stack<>();
+    outerloop:
     for (int i = 0; i < 9; i++) { // for every cell ..
       for (int j = 0; j < 9; j++) {
-        if (this.cellMatrix[i][j].size() > 1) { // if a cell has length larger than 1
-          cell missingCell = this.cellMatrix[i][j]; // add it to the missingCell
-          // check every value for the cell
+        if (A.cellMatrix[i][j].size() > 1) { // if a cell has length larger than 1
+
+          q = i;
+          w = j;
+          cell missingCell = A.cellMatrix[i][j]; // add it to the missingCell
           for (int p = 0; p < missingCell.size(); p++) {
             cell testCell = missingCell.copy(); // copy it
             testCell.removeExceptIndex(p); // remove except index p 
-            sudoku A = copy();
-            A.replace(testCell);
-            A.genSolve(); // solving algo using logic rules
-            System.out.println("branches");
-
-            if (A.contradiction()) {
-              continue;
-            }
-            else if (A.solved()) {
-              return A;
-            }
-            else { // run into another roadblock
-              return A.bruteForce();
-            }
+            myStack.push(testCell);
           }
+          break outerloop;
         }
       }
     }
-    return copy(); // no solution
+
+    cell x = null;
+    System.out.println("begin: " + myStack.size());
+    while (!myStack.isEmpty()) {
+      x = myStack.pop();
+      A.replace(x);
+      System.out.println(myStack.size());
+      A.genSolve();
+      if (A.contradiction()) {
+        A = copy();
+        continue;
+      }
+      else if (A.solved()) {
+        return A;
+      }
+      else {
+        outerloop2:
+        for (int i = 0; i < 9; i++) {
+          for (int j = 0; j < 9; j++) {
+            if (A.cellMatrix[i][j].size() > 1) {
+              cell missingCell2 = A.cellMatrix[i][j];
+              for (int p = 0; p < missingCell2.size(); p++) {
+                cell testCell2 = missingCell2.copy();
+                testCell2.removeExceptIndex(p);
+                myStack.push(testCell2);
+              }
+              break outerloop2;
+            }
+          }
+        }
+        //A = copy();
+      }
+      //x = myStack.pop();
+      //A.replace(x);
+      //A.genSolve();
+    }
+    return null;
   }
 
   public sudoku copy () {
