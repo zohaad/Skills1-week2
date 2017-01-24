@@ -32,6 +32,9 @@ public class sudoku {
 
   public void replace (cell myCell) {
     this.cellMatrix[myCell.row()][myCell.col()] = myCell;
+    if (myCell.size() == 1) {
+      this.queue.add(myCell);
+    }
   }
 
   public void simpleSolve () {
@@ -211,20 +214,18 @@ public class sudoku {
   }
 
   public sudoku bruteForce () { // this uses enumeration method
-    // genSolve();
-    if (solved()) {
+    genSolve();
+    if (solved() && !contradiction()) {
       return copy();
     }
 
     cell missingCell = this.cellMatrix[1][1];
-
-
     int k = missingCell.size();
     mainloop:
     for (int i = 0; i < 9; i++) {
       for (int j = 0; j < 9; j++) {
         if (this.cellMatrix[i][j].size() > 1) { // if a cell has length larger than 1
-          missingCell = this.cellMatrix[i][j].copy(); // add it to the missingCell
+          missingCell = this.cellMatrix[i][j]; // add it to the missingCell
           k = missingCell.size();
           break mainloop;
         }
@@ -236,22 +237,19 @@ public class sudoku {
       testCell.removeExceptIndex(i); // remove
       sudoku A = copy();
       A.replace(testCell);
-      A.genSolve();
+      A.genSolve(); // solving algo using logic rules
 
-      if (A.contradiction()) {
+      if (A == null || A.contradiction()) {
         continue;
       }
       else if (A.solved()) {
-        //this.cellMatrix = A.returnCellMatrix();
-        //this.queue = A.returnQueue();
         return A;
       }
       else { // run into another roadblock
         return A.bruteForce();
       }
     }
-    sudoku B = copy();
-    return B; // shouldn't be ever reached
+    return null;
   }
 
   public sudoku copy () {

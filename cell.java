@@ -18,6 +18,7 @@ public class cell {
   }
 
   public boolean isEmpty () {
+    , 
     return this.candidates.isEmpty();
   }
 
@@ -58,6 +59,14 @@ public class cell {
   public void removeExcept (int i) {
     this.candidates.clear();
     this.candidates.add(i);
+  }
+
+  public void reset () {
+    this.candidates.clear();
+    for (int i = 1; i < 10; i++) {
+      this.candidates.add(i);
+    }
+
   }
 
   public void removeExceptIndex (int i) {
