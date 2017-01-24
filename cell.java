@@ -18,7 +18,6 @@ public class cell {
   }
 
   public boolean isEmpty () {
-    , 
     return this.candidates.isEmpty();
   }
 
@@ -66,7 +65,6 @@ public class cell {
     for (int i = 1; i < 10; i++) {
       this.candidates.add(i);
     }
-
   }
 
   public void removeExceptIndex (int i) {

@@ -26,7 +26,6 @@ public class sudoku {
 
     for (int i = 0; i < hints.size(); i++) {
       replace(hints.get(i));
-      this.queue.add(hints.get(i));
     }
   }
 
@@ -220,6 +219,8 @@ public class sudoku {
     }
 
     cell missingCell = this.cellMatrix[1][1];
+    int p = 0;
+    int q = 0;
     int k = missingCell.size();
     mainloop:
     for (int i = 0; i < 9; i++) {
@@ -227,6 +228,8 @@ public class sudoku {
         if (this.cellMatrix[i][j].size() > 1) { // if a cell has length larger than 1
           missingCell = this.cellMatrix[i][j]; // add it to the missingCell
           k = missingCell.size();
+          p = i;
+          q = j;
           break mainloop;
         }
       }
@@ -238,8 +241,9 @@ public class sudoku {
       sudoku A = copy();
       A.replace(testCell);
       A.genSolve(); // solving algo using logic rules
+      System.out.println("branches");
 
-      if (A == null || A.contradiction()) {
+      if (A.contradiction()) {
         continue;
       }
       else if (A.solved()) {
@@ -249,6 +253,10 @@ public class sudoku {
         return A.bruteForce();
       }
     }
+    // System.out.println("null!");
+    // sudoku B = copy();
+    // B.cellMatrix[p][q].reset();
+    // return B.bruteForce();
     return null;
   }
 
