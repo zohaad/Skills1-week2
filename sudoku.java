@@ -202,38 +202,40 @@ public class sudoku {
     System.out.println();
   }
 
-  public void bruteForce () { // this uses enumeration method
-    genSolve();
-    Stack<Stack> missingCells = new Stack<>();
-
+  public sudoku bruteForce () { // this uses enumeration method
+    sudoku A = copy();
+    A.genSolve();
+    if (!A.contradiction() && A.solved()) {
+      return A;
+    }
+    mainloop:
     for (int i = 0; i < 9; i++) {
       for (int j = 0; j < 9; j++) {
         if (this.cellMatrix[i][j].size() > 1) {
-          Stack<cell> choices = new Stack<>();
+          cell missingCell = this.cellMatrix[i][j].copy();
 
-          for (int k = 0; k < this.cellMatrix[i][j].size(); k++) {
-            cell x = this.cellMatrix[i][j].copy();
-            x.removeExceptIndex(k);
-            choices.push(x);
+          for (int p = 0; p < missingCell.size(); p++) {
+            cell testCell = missingCell.copy();
+            testCell.removeExceptIndex(p);
+            sudoku oldA = A.copy();
+            A.replace(testCell);
+            A.genSolve();
+
+            if (A.contradiction()) {
+              A = oldA.copy();
+              continue;
+            }
+            else if (A.solved()) {
+              return A;
+            }
+            else {
+              return A.bruteForce();
+            }
           }
-          missingCells.push(choices);
         }
       }
     }
-
-    sudoku A = copy();
-    while (!A.solved()) {
-      if (missingCells.peek().size() > 1) {
-        A.replace((cell)missingCells.peek().pop());
-      }
-      else {
-        A.replace((cell)missingCells.pop().pop());
-      }
-      A.bruteForce();
-      if (A.contradiction()) {
-        break;
-      }
-    }
+    return null;
   }
 
   public sudoku copy () {
