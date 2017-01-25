@@ -242,26 +242,44 @@ public class sudoku {
       }
     }
 
+    sudoku B = copy();
     cell x = null;
     sudoku oldA = copy();
     System.out.println("begin: " + myStack.size());
+    int branchCount = 0;
+    int totalBranches = 10;
     while (!myStack.isEmpty()) {
+      branchCount++;
       x = myStack.pop();
       oldA = A.copy(); // make a backup of head of current branch node
       A.replace(x);
       System.out.println(myStack.size());
       A.genSolve();
+      A.print();
       if (A.contradiction()) {
         System.out.println("contradiction!");
-        A = oldA.copy();
+        if (branchCount < totalBranches - 1) {
+          A = oldA.copy();
+          A.cellMatrix[x.row()][x.col()].remove(x.solution());
+        }
+        else {
+          System.out.println("ELSE");
+          //sudoku B = myStack.pop().copy();
+          //A = myStack.peek().copy();
+          //myStack.push(B);
+          A = B.copy();
+        }
+        //A = oldA.copy();
         // A = oldA.copy();
-        A.cellMatrix[x.row()][x.col()].remove(x.solution());
         continue;
       }
       else if (A.solved()) {
         return A;
       }
       else {
+        branchCount = 0;
+        B = A.copy();// make head copy
+        B.replace(myStack.peek().copy());
         outerloop2:
         for (int i = 0; i < 9; i++) {
           for (int j = 0; j < 9; j++) {
@@ -272,6 +290,7 @@ public class sudoku {
                 testCell2.removeExceptIndex(p);
                 myStack.push(testCell2);
               }
+              totalBranches = missingCell2.size();
               break outerloop2;
             }
           }
