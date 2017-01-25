@@ -117,7 +117,6 @@ public class sudoku {
       genRowSolve();
       genColSolve();
       genBlockSolve();
-      // System.out.println(this.queue.size());
     }
   }
 
@@ -206,8 +205,14 @@ public class sudoku {
         else {
           System.out.print("X ");
         }
+        if (j == 2 || j == 5) {
+          System.out.print("|");
+        }
       }
       System.out.println();
+      if (i == 2 || i ==  5) {
+        System.out.println("-------------------");
+      }
     }
     System.out.println();
   }
