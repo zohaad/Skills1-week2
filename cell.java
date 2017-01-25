@@ -43,7 +43,7 @@ public class cell {
     }
   }
 
-  public void remove (int i) {
+  public void removeInt (int i) {
     if (contains(i)) {
       this.candidates.remove(this.candidates.indexOf(i));
     }
@@ -69,6 +69,7 @@ public class cell {
 
   public void removeExceptIndex (int i) {
     int x = this.candidates.get(i);
+    System.out.println("rEI: " + x);
     this.candidates.clear();
     this.candidates.add(x);
   }

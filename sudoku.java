@@ -60,7 +60,7 @@ public class sudoku {
       cell x = this.cellMatrix[myCell.row()][i];
       if (i != myCell.col()) {
         int oldSize = x.size();
-        x.remove(myCell.solution());
+        x.removeInt(myCell.solution());
         if (x.solved() && oldSize == 2) { // only add to queue if it has recently been solved
           this.queue.add(x);
         }
@@ -73,7 +73,7 @@ public class sudoku {
       cell x = this.cellMatrix[i][myCell.col()];
       if (i != myCell.row()) {
         int oldSize = x.size();
-        x.remove(myCell.solution());
+        x.removeInt(myCell.solution());
         if (x.solved() && oldSize == 2) {
           this.queue.add(x);
         }
@@ -98,7 +98,7 @@ public class sudoku {
         cell x = this.cellMatrix[i][j];
         if (!(i == myCell.row() && j == myCell.col())) {
           int oldSize = x.size();
-          x.remove(myCell.solution());
+          x.removeInt(myCell.solution());
           if (x.solved() && oldSize == 2) {
             this.queue.add(x);
           }
@@ -229,6 +229,7 @@ public class sudoku {
         if (A.cellMatrix[i][j].size() > 1) {
           for (int k = 0; k < A.cellMatrix[i][j].size(); k++) {
             sudoku B = A.copy();
+            B.genSolve();
             cell replaceCell = B.cellMatrix[i][j].copy();
             replaceCell.removeExceptIndex(k);
             B.replace(replaceCell);
@@ -240,10 +241,12 @@ public class sudoku {
     }
 
     while (!myStack.isEmpty()) {
-      A.print();
       System.out.println(myStack.size());
       A = myStack.pop().copy();
+      A.print();
       A.genSolve();
+      System.out.println("after:");
+      A.print();
       if (A.contradiction()) {
         System.out.println("if");
         continue;
@@ -260,6 +263,7 @@ public class sudoku {
             if (A.cellMatrix[i][j].size() > 1) {
               for (int k = 0; k < A.cellMatrix[i][j].size(); k++) {
                 sudoku B = A.copy();
+                B.genSolve();
                 cell replaceCell = B.cellMatrix[i][j].copy();
                 replaceCell.removeExceptIndex(k);
                 B.replace(replaceCell);
