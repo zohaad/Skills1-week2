@@ -242,11 +242,8 @@ public class sudoku {
       }
     }
 
-    int kk = 0;
-    int ii = 0;
     cell x = null;
     sudoku oldA = copy();
-    sudoku B = null;
     System.out.println("begin: " + myStack.size());
     while (!myStack.isEmpty()) {
       x = myStack.pop();
@@ -254,15 +251,9 @@ public class sudoku {
       A.replace(x);
       System.out.println(myStack.size());
       A.genSolve();
-      ii++;
       if (A.contradiction()) {
         System.out.println("contradiction!");
-        if (ii < kk && B != null) {
-          A = oldA.copy();
-        }
-        else {
-          A = B.copy();
-        }
+        A = oldA.copy();
         // A = oldA.copy();
         A.cellMatrix[x.row()][x.col()].remove(x.solution());
         continue;
@@ -271,7 +262,6 @@ public class sudoku {
         return A;
       }
       else {
-        B = copy();
         outerloop2:
         for (int i = 0; i < 9; i++) {
           for (int j = 0; j < 9; j++) {
@@ -282,8 +272,6 @@ public class sudoku {
                 testCell2.removeExceptIndex(p);
                 myStack.push(testCell2);
               }
-              kk = missingCell2.size();
-              ii = 0;
               break outerloop2;
             }
           }
