@@ -223,7 +223,7 @@ public class sudoku {
 
     int q = 0;
     int w = 0;
-    Stack<cell> myStack = new Stack<>();
+    Stack<sudoku> myStack = new Stack<>();
     outerloop:
     for (int i = 0; i < 9; i++) { // for every cell ..
       for (int j = 0; j < 9; j++) {
@@ -233,9 +233,11 @@ public class sudoku {
           w = j;
           cell missingCell = A.cellMatrix[i][j]; // add it to the missingCell
           for (int p = 0; p < missingCell.size(); p++) {
+            A = copy();
             cell testCell = missingCell.copy(); // copy it
             testCell.removeExceptIndex(p); // remove except index p 
-            myStack.push(testCell);
+            A.replace(testCell);
+            myStack.push(A);
           }
           break outerloop;
         }
@@ -243,32 +245,27 @@ public class sudoku {
     }
 
     sudoku B = copy();
-    cell x = null;
+    sudoku x = null;
     sudoku oldA = copy();
     System.out.println("begin: " + myStack.size());
     int branchCount = 0;
     int totalBranches = 10;
     while (!myStack.isEmpty()) {
-      branchCount++;
       x = myStack.pop();
       oldA = A.copy(); // make a backup of head of current branch node
-      A.replace(x);
+      A = x.copy();
       System.out.println(myStack.size());
       A.genSolve();
-      A.print();
+      //A.print();
       if (A.contradiction()) {
         System.out.println("contradiction!");
-        if (branchCount < totalBranches - 1) {
-          A = oldA.copy();
-          A.cellMatrix[x.row()][x.col()].remove(x.solution());
-        }
-        else {
-          System.out.println("ELSE");
-          //sudoku B = myStack.pop().copy();
-          //A = myStack.peek().copy();
-          //myStack.push(B);
-          A = B.copy();
-        }
+        sudoku AA = myStack.pop().copy();
+        int sol = A.cellMatrix[q][w].solution();
+        AA.cellMatrix[q][w].remove(sol);
+        AA = AA.copy();
+        myStack.push(AA.copy());
+        // A = oldA.copy();
+        // A.cellMatrix[x.row()][x.col()].remove(x.solution());
         //A = oldA.copy();
         // A = oldA.copy();
         continue;
@@ -277,20 +274,20 @@ public class sudoku {
         return A;
       }
       else {
-        branchCount = 0;
-        B = A.copy();// make head copy
-        B.replace(myStack.peek().copy());
+        oldA = A.copy();
         outerloop2:
         for (int i = 0; i < 9; i++) {
           for (int j = 0; j < 9; j++) {
             if (A.cellMatrix[i][j].size() > 1) {
               cell missingCell2 = A.cellMatrix[i][j];
               for (int p = 0; p < missingCell2.size(); p++) {
-                cell testCell2 = missingCell2.copy();
-                testCell2.removeExceptIndex(p);
-                myStack.push(testCell2);
+                cell testCell2 = missingCell2.copy(); // copy it
+                testCell2.removeExceptIndex(p); // remove except index p 
+                A.replace(testCell2);
+                myStack.push(A);
               }
-              totalBranches = missingCell2.size();
+              q = i;
+              w = j;
               break outerloop2;
             }
           }
