@@ -228,8 +228,8 @@ public class sudoku {
       for (int j = 0; j < 9; j++) {
         if (A.cellMatrix[i][j].size() > 1) {
           for (int k = 0; k < A.cellMatrix[i][j].size(); k++) {
-            sudoku B = A.copy();
-            B.genSolve();
+            sudoku B = A.copy(); // info lost after copying
+            B.genSolve(); // so gensolve again
             cell replaceCell = B.cellMatrix[i][j].copy();
             replaceCell.removeExceptIndex(k);
             B.replace(replaceCell);
@@ -240,23 +240,25 @@ public class sudoku {
       }
     }
 
+    int maxStack = 0;
+    int iterations = 0;
+  
     while (!myStack.isEmpty()) {
-      System.out.println(myStack.size());
+      if (myStack.size() > maxStack) {
+        maxStack = myStack.size();
+      }
+      iterations++;
       A = myStack.pop().copy();
-      A.print();
       A.genSolve();
-      System.out.println("after:");
-      A.print();
       if (A.contradiction()) {
-        System.out.println("if");
         continue;
       }
       else if (A.solved()) {
-        System.out.println("else if");
+        System.out.println("Iterations: " + iterations);
+        System.out.println("Max amount of stacks: " + maxStack);
         return A;
       }
       else {
-        System.out.println("else");
         outerloop:
         for (int i = 0; i < 9; i++) {
           for (int j = 0; j < 9; j++) {

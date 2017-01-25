@@ -69,7 +69,6 @@ public class cell {
 
   public void removeExceptIndex (int i) {
     int x = this.candidates.get(i);
-    System.out.println("rEI: " + x);
     this.candidates.clear();
     this.candidates.add(x);
   }
