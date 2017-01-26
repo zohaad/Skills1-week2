@@ -234,7 +234,7 @@ public class sudoku {
         if (A.cellMatrix[i][j].size() > 1) {
           for (int k = 0; k < A.cellMatrix[i][j].size(); k++) {
             sudoku B = A.copy(); // info lost after copying
-            B.genSolve(); // so gensolve again
+            //B.genSolve(); // so gensolve again
             cell replaceCell = B.cellMatrix[i][j].copy();
             replaceCell.removeExceptIndex(k);
             B.replace(replaceCell);
@@ -270,7 +270,7 @@ public class sudoku {
             if (A.cellMatrix[i][j].size() > 1) {
               for (int k = 0; k < A.cellMatrix[i][j].size(); k++) {
                 sudoku B = A.copy();
-                B.genSolve();
+                //B.genSolve();
                 cell replaceCell = B.cellMatrix[i][j].copy();
                 replaceCell.removeExceptIndex(k);
                 B.replace(replaceCell);
@@ -286,15 +286,17 @@ public class sudoku {
   }
 
   public sudoku copy () {
-    ArrayList<cell> allHints = new ArrayList<cell>();
+    ArrayList<cell> noHints = new ArrayList<cell>();
+    sudoku mySudoku = new sudoku(noHints);
     for (int i = 0; i < 9; i++) { // row
       for (int j = 0; j < 9; j++) { // column
-        if (this.cellMatrix[i][j].solved() && this.cellMatrix[i][j].solution() != 0) {
-          allHints.add(this.cellMatrix[i][j].copy());
+        if (this.cellMatrix[i][j].solved()) {
+          mySudoku.queue.add(this.cellMatrix[i][j].copy());
         }
+        mySudoku.cellMatrix[i][j] = this.cellMatrix[i][j].copy();
       }
     }
-    return new sudoku(allHints);
+    return mySudoku;
   }
 
   public boolean contradiction () {
