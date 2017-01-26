@@ -1,9 +1,13 @@
+// sudoku.java
+// Jan-Marc Glowienke i6117274
+// Zohaad Fazal i6107208
 import java.util.*;
 
 public class sudoku {
   private cell[][] cellMatrix;
   private Queue<cell> queue;
 
+  // constructor
   public sudoku (ArrayList<cell> hints) {
     ArrayList<Integer> defaultInput = new ArrayList<Integer>();
     for (int i = 0; i < 9; i++) {
@@ -30,20 +34,19 @@ public class sudoku {
   }
 
   public void replace (cell myCell) {
-    this.cellMatrix[myCell.row()][myCell.col()] = myCell;
+    this.cellMatrix[myCell.row()][myCell.col()] = myCell; // doesn't use a copy, so remember to make copies when needed
     if (myCell.size() == 1) {
       this.queue.add(myCell);
     }
   }
 
+  // simpleSolve uses the simple logic rules
   public void simpleSolve () {
     while (!this.queue.isEmpty()) {
       cell x = this.queue.remove(); // remove and retrieve head of queue
       rowSolve(x);
       colSolve(x);
       blockSolve(x);
-      // print();
-      // System.out.println(this.queue.size());
     }
   }
 
@@ -56,11 +59,11 @@ public class sudoku {
   }
 
   public void rowSolve (cell myCell) {
-    for (int i = 0; i < 9; i++) { // fix row, go through columns
-      cell x = this.cellMatrix[myCell.row()][i];
-      if (i != myCell.col()) {
+    for (int i = 0; i < 9; i++) { // go through columns
+      cell x = this.cellMatrix[myCell.row()][i]; // fix row
+      if (i != myCell.col()) { // if we're not on the solution cell..
         int oldSize = x.size();
-        x.removeInt(myCell.solution());
+        x.removeInt(myCell.solution()); // remove value of solution cell
         if (x.solved() && oldSize == 2) { // only add to queue if it has recently been solved
           this.queue.add(x);
         }
@@ -68,6 +71,7 @@ public class sudoku {
     }
   }
 
+  // similarly:
   public void colSolve (cell myCell) {
     for (int i = 0; i < 9; i++) { // fix column, go through rows
       cell x = this.cellMatrix[i][myCell.col()];
@@ -86,17 +90,20 @@ public class sudoku {
     int[] start_point = new int[2];
     start_point[0] = myCell.row();
     start_point[1] = myCell.col();
+    // go to left cell in a block:
     while(start_point[0] != 0 && start_point[0] != 3 && start_point[0] != 6) {
       start_point[0]--;
     }
+    // go to top cell in a block:
     while(start_point[1] != 0 && start_point[1] != 3 && start_point[1] != 6) {
       start_point[1]--;
     }
 
+    // go through the block:
     for (int i = start_point[0]; i < start_point[0] + 3; i++) {
       for (int j = start_point[1]; j < start_point[1] + 3; j++) {
         cell x = this.cellMatrix[i][j];
-        if (!(i == myCell.row() && j == myCell.col())) {
+        if (!(i == myCell.row() && j == myCell.col())) { // if it's not the solution cell:
           int oldSize = x.size();
           x.removeInt(myCell.solution());
           if (x.solved() && oldSize == 2) {
@@ -107,13 +114,15 @@ public class sudoku {
     }
   }
 
+  // using generalization rules
   public void genSolve () {
-    // while Q is not empty do simpleSolve and genSolve
     while (!this.queue.isEmpty()) {
+      // use simpleSolve rules
       cell x = this.queue.remove();
       rowSolve(x);
       colSolve(x);
       blockSolve(x);
+      // go through again with generalization rules:
       genRowSolve();
       genColSolve();
       genBlockSolve();
@@ -121,17 +130,17 @@ public class sudoku {
   }
 
   public void genRowSolve () {
-    for (int i = 0; i < 9; i++) { // for every row
+    for (int i = 0; i < 9; i++) { // for every row make List of List of cells
       List<List<cell>> genRow = new ArrayList<>();
-      for (int j = 1; j < 10; j++) { // for every number
+      for (int j = 1; j < 10; j++) { // for every number make ArrayList 
         genRow.add(new ArrayList<cell>());
         for (int k = 0; k < 9; k++) { // for every cell (column) in the row
-          if (this.cellMatrix[i][k].contains(j)) {
-            genRow.get(j - 1).add(this.cellMatrix[i][k]);
+          if (this.cellMatrix[i][k].contains(j)) { // if it contains the number
+            genRow.get(j - 1).add(this.cellMatrix[i][k]); // add it to the ArrayList
           }
         }
       }
-      // now we have an ArrayList representing {1 ... 9}, containing the cells in an arraylist. Now we need to pluck out the singleton sets:
+      // now we have an ArrayList representing {1 ... 9}, containing the cells in ArrayLists. Now we need to pluck out the singleton sets:
       for (int j = 1; j < 10; j++) { // for every number ...
         List<cell> x = genRow.get(j - 1);
         if (x.size() == 1 && x.get(0).size() > 1) { // if only one candidate exists for the number and simpleSolve() couldn't find it...
@@ -143,8 +152,8 @@ public class sudoku {
       }
     }
   }
+
   // similarly:
-  
   public void genColSolve () {
     for (int i = 0; i < 9; i++) { // for every column
       List<List<cell>> genCol = new ArrayList<>();
@@ -217,14 +226,16 @@ public class sudoku {
     System.out.println();
   }
 
-  public sudoku bruteForce () { // this uses enumeration method
+  public sudoku bruteForce () { // This uses the enumeration method
 
+    // see if it can be solved with genSolve()
     sudoku A = copy();
     A.genSolve();
     if (!A.contradiction() && A.solved()) {
       return A;
     }
 
+    // make stack of sudoku
     Stack<sudoku> myStack = new Stack<>();
 
     // make initial stack
@@ -232,13 +243,12 @@ public class sudoku {
     for (int i = 0; i < 9; i++) {
       for (int j = 0; j < 9; j++) {
         if (A.cellMatrix[i][j].size() > 1) {
-          for (int k = 0; k < A.cellMatrix[i][j].size(); k++) {
-            sudoku B = A.copy(); // info lost after copying
-            //B.genSolve(); // so gensolve again
-            cell replaceCell = B.cellMatrix[i][j].copy();
-            replaceCell.removeExceptIndex(k);
-            B.replace(replaceCell);
-            myStack.add(B);
+          for (int k = 0; k < A.cellMatrix[i][j].size(); k++) { // for all numbers in the unsolved cell
+            sudoku B = A.copy(); 
+            cell replaceCell = B.cellMatrix[i][j].copy(); // copy the first unsolved cell
+            replaceCell.removeExceptIndex(k); // remove all except index k
+            B.replace(replaceCell); // replace it in the copied sudoku
+            myStack.add(B); // add the guess-sudoku to the stack
           }
           break outerloop;
         }
@@ -249,28 +259,37 @@ public class sudoku {
     int iterations = 0;
   
     while (!myStack.isEmpty()) {
+      // performance measures
       if (myStack.size() > maxStack) {
         maxStack = myStack.size();
       }
       iterations++;
+      // pop it and try to solve it
       A = myStack.pop().copy();
       A.genSolve();
-      if (A.contradiction()) {
+      // 3 things can happen
+      // 1. contradiction:
+      if (A.contradiction()) { // ignore this guess and continue with the while loop 
         continue;
       }
+      // 2. solved:
       else if (A.solved()) {
+        // print out performance
         System.out.println("Iterations: " + iterations);
         System.out.println("Max amount of stacks: " + maxStack);
+        // return the solved sudoku
         return A;
       }
+      // 3. run into another roadblock
       else {
+        // similar to making the initial stack:
         outerloop:
         for (int i = 0; i < 9; i++) {
           for (int j = 0; j < 9; j++) {
-            if (A.cellMatrix[i][j].size() > 1) {
+            if (A.cellMatrix[i][j].size() > 1) { // pick first unsolved cell
+              // and add all possible guess-sudokus to the stack
               for (int k = 0; k < A.cellMatrix[i][j].size(); k++) {
                 sudoku B = A.copy();
-                //B.genSolve();
                 cell replaceCell = B.cellMatrix[i][j].copy();
                 replaceCell.removeExceptIndex(k);
                 B.replace(replaceCell);
@@ -282,11 +301,13 @@ public class sudoku {
         }
       }
     }
-    return null;
+    return null; // this will only be reached if the sudoku is unsolvable
+    // it will then give a Null Pointer Exception in the sudokuSolver.java class
   }
 
-  public sudoku copy () {
-    ArrayList<cell> noHints = new ArrayList<cell>();
+  public sudoku copy () { // this makes a hardcopy
+    ArrayList<cell> noHints = new ArrayList<cell>(); // constructor needs ArrayList<cell>
+    // provide empty one
     sudoku mySudoku = new sudoku(noHints);
     for (int i = 0; i < 9; i++) { // row
       for (int j = 0; j < 9; j++) { // column
@@ -299,10 +320,11 @@ public class sudoku {
     return mySudoku;
   }
 
+  // contraction happens when a cell is empty
   public boolean contradiction () {
     for (int i = 0; i < 9; i++) {
       for (int j = 0; j < 9; j++) {
-        if (this.cellMatrix[i][j].isEmpty() || this.cellMatrix[i][j].solution() == 0) {
+        if (this.cellMatrix[i][j].isEmpty()) {
           return true;
         }
       }
@@ -310,15 +332,15 @@ public class sudoku {
     return false;
   }
 
+  // solved when the cell has size() 1
   public boolean solved () {
     for (int i = 0; i < 9; i++) {
       for (int j = 0; j < 9; j++) {
-        if (this.cellMatrix[i][j].size() != 1 && this.cellMatrix[i][j].solution() != 0) {
+        if (this.cellMatrix[i][j].size() != 1) {
           return false;
         }
       }
     }
     return true;
   }
-
 }

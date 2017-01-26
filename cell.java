@@ -1,9 +1,14 @@
+// cell.java
+// Jan-Marc Glowienke i6117274
+// Zohaad Fazal i6107208
+
 import java.util.*;
 
 public class cell {
   private ArrayList<Integer> candidates;
   private int[] position;
 
+  // constructor
   public cell (ArrayList<Integer> givenCandidates, int[] pos){
     
     this.candidates = new ArrayList<Integer>();
@@ -33,7 +38,6 @@ public class cell {
     return this.candidates.contains(i);
   }
 
-  // kind of dangerous
   public int solution () {
     if (!isEmpty()) {
       return this.candidates.get(0);
@@ -45,7 +49,7 @@ public class cell {
 
   public void removeInt (int i) {
     if (contains(i)) {
-      this.candidates.remove(this.candidates.indexOf(i));
+      this.candidates.remove(this.candidates.indexOf(i)); // gets index of the int and removes it
     }
   }
 
@@ -90,7 +94,7 @@ public class cell {
     return this.position;
   } 
   
-  public cell copy () { // returns a "hard" copy Java doesn't have hard copies, but this is good enough
+  public cell copy () { // returns a "hard" copy (as Java doesn't have hard copies)
     return new cell(currentCandidates(), position());
   }
 }
